@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "365459180810",
+    "project_id": "linksygo",
+    "storage_bucket": "linksygo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365459180810:android:0948c3dd5f6218a4fbbef3",
+        "android_client_info": {
+          "package_name": "com.example.my_first_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRCOTd6rGRdqr8AJWITetZQnQ0obJ_d1k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

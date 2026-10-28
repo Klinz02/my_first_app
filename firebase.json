@@ -1,0 +1,24 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "linksygo",
+          "appId": "1:365459180810:android:0948c3dd5f6218a4fbbef3",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "linksygo",
+          "configurations": {
+            "android": "1:365459180810:android:0948c3dd5f6218a4fbbef3"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

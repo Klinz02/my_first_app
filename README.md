@@ -1,17 +1,18 @@
-# my_first_app
+# Linksy go Android app
 
-A new Flutter project.
+Linksy go is being built with Flutter (Dart) in VS Code. Android is the release target for this plan. The existing Firebase project is initialized in the app and registered for the current Android application ID.
 
-## Getting Started
+## Current implementation
 
-This project is a starting point for a Flutter application.
+- Welcome and account screens are present.
+- Account creation and sign-in use Firebase Authentication; password reset, session routing, and sign-out are included.
+- The home dashboard is a visual shell. Schedule, study planning, groups, messaging, and file sharing remain to be implemented.
 
-A few resources to get you started if this is your first Flutter project:
+## Run from VS Code
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+1. Open this project folder in VS Code.
+2. Use the Flutter device picker to select an Android emulator or connected Android phone.
+3. Run `flutter pub get` in the integrated terminal, then choose **Run > Start Debugging** or run `flutter run`.
+4. To build an Android APK, run `flutter build apk` in the integrated terminal.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Firebase is configured by `lib/firebase_options.dart` and `android/app/google-services.json`. Do not paste the contents of either configuration file into messages or commit credentials from unrelated services.
