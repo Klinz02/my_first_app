@@ -411,7 +411,7 @@ class _CommitmentEditorState extends State<CommitmentEditor> {
     _titleController = TextEditingController(text: item?.title ?? '');
     _locationController = TextEditingController(text: item?.location ?? '');
     _type = item?.type ?? 'Class';
-    _date = item == null ? widget.initialDate : DateTime.parse(item.date);
+    _date = DateTime.tryParse(item?.date ?? '') ?? widget.initialDate;
     _start = item == null
         ? const TimeOfDay(hour: 9, minute: 0)
         : TimeOfDay(
@@ -487,8 +487,9 @@ class _CommitmentEditorState extends State<CommitmentEditor> {
                       firstDate: DateTime(2020),
                       lastDate: DateTime(2100),
                     );
-                    if (picked != null)
+                    if (picked != null) {
                       setState(() => _date = DateUtils.dateOnly(picked));
+                    }
                   },
                 ),
                 Row(
