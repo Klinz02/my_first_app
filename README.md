@@ -2,132 +2,125 @@
 
 An Android app built with Flutter and Firebase. You can create an account, log in, and add your classes, work shifts and deadlines to a weekly schedule.
 
-These steps assume you're on Windows and your phone is already set up: **Developer options** and **Wireless debugging** are turned on, and the phone runs Android 11 or newer.
+This guide is for building the app on a Windows laptop and installing it on an Android phone. You don't need a USB cable.
 
-## Before you start
+## 1. One-time setup
 
-You need these installed once:
+Install these once:
 
 - **Flutter** (https://docs.flutter.dev/get-started/install/windows)
 - **Android Studio** (https://developer.android.com/studio)
 
-Then, in Android Studio, open **More Actions → SDK Manager → SDK Tools**, tick **Show Package Details**, and make sure these are installed:
+In Android Studio, open **More Actions → SDK Manager → SDK Tools**, tick **Show Package Details**, and make sure these are installed:
 
 - **Android SDK Platform-Tools**
 - **Android SDK Command-line Tools (latest)**
-- **NDK (Side by side) → 28.2.13676358** (release builds fail without it)
+- **NDK (Side by side) → 28.2.13676358** (the build fails without it)
 
-To check everything, open Command Prompt and run:
+Then open the project folder in VS Code, open the terminal (**View → Terminal**), and run:
 
 ```
 flutter doctor
 ```
 
-The **Flutter** and **Android toolchain** lines should have a green ✓. If Android licenses are missing, run `flutter doctor --android-licenses` and type `y` to each one.
+The **Flutter** and **Android toolchain** lines should have a green ✓. If it says Android licenses are missing, run `flutter doctor --android-licenses` and type `y` to each one.
 
-## 1. Connect your phone over Wi‑Fi
+## 2. Build the app
 
-Your phone and computer must be on the **same Wi‑Fi network**.
-
-1. On the phone, open **Settings → Developer options → Wireless debugging**, and make sure it's on.
-2. Tap **Pair device with pairing code**. Leave that screen open. It shows an IP address and port (like `192.168.1.20:41235`) and a 6-digit code.
-3. On the computer, open Command Prompt and run the command below, using the IP and port from your phone. Type the 6-digit code when it asks.
-
-   ```
-   adb pair 192.168.1.20:41235
-   ```
-
-4. Close the popup on the phone. The main Wireless debugging screen now shows **IP address & port** with a **different** port number. Use that one:
-
-   ```
-   adb connect 192.168.1.20:37099
-   ```
-
-   It should say `connected to ...`.
-
-You only need to pair (step 3) the first time. Next time, just do step 4. Check the port again, because it changes.
-
-### If it says "adb is not recognized"
-
-adb is installed with Android Studio, but Windows can't find it. Windows only looks for commands in the folders listed in **PATH**, and Android Studio doesn't add adb's folder (`%LOCALAPPDATA%\Android\Sdk\platform-tools`) to that list. Flutter finds the Android SDK by itself, which is why `flutter build` works even when `adb` doesn't.
-
-**Permanent fix:** paste this into a PowerShell terminal (the default in VS Code):
-
-```
-[Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path","User") + ";$env:LOCALAPPDATA\Android\Sdk\platform-tools", "User")
-```
-
-Then **close VS Code completely and reopen it**, because terminals only read PATH when they start. Check it worked:
-
-```
-adb version
-```
-
-If it prints a version number, plain `adb pair` and `adb connect` will work. If it still fails, the folder doesn't exist yet. Install **Android SDK Platform-Tools** from Android Studio (see **Before you start**).
-
-**Quick fix for one-off use:** run adb by its full path. Note that PowerShell and Command Prompt write the path differently.
-
-In **PowerShell**:
-
-```
-& "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" pair 192.168.1.20:41235
-& "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" connect 192.168.1.20:37099
-```
-
-In **Command Prompt**:
-
-```
-%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe pair 192.168.1.20:41235
-%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe connect 192.168.1.20:37099
-```
-
-## 2. Run the app
-
-In Command Prompt, go to this project folder and run:
+In the VS Code terminal, inside the project folder:
 
 ```
 flutter pub get
-flutter devices
-```
-
-Your phone should be in the list (not just Windows, Chrome and Edge). Then:
-
-```
-flutter run
-```
-
-The first run takes a few minutes. When it's done, Linksy go opens on your phone and stays installed. While it's running, press `r` in Command Prompt to reload after a code change, or `q` to quit.
-
-**Using VS Code instead:** open the project folder, pick your phone in the device selector at the bottom right, and press **F5**.
-
-### Check it works
-
-1. The **Linksy go** welcome screen appears.
-2. **Create account** with a name, email and a password of 8+ characters takes you to the home dashboard.
-3. On the **Schedule** tab, adding a class makes it show up in the list.
-
-## 3. Install it without the computer (optional)
-
-To get an app file you can keep or share:
-
-```
-flutter clean
 flutter build apk --release
 ```
 
-It worked if the last line says `√ Built build\app\outputs\flutter-apk\app-release.apk`. Send that file to any Android phone, open it, and tap **Allow** when Android asks about installing unknown apps.
+The first build can take 10–20 minutes. It worked if the last line says:
+
+```
+√ Built build\app\outputs\flutter-apk\app-release.apk
+```
+
+## 3. Put it on the phone
+
+1. Open the folder with the app file:
+
+   ```
+   explorer build\app\outputs\flutter-apk
+   ```
+
+2. Send **app-release.apk** to the phone. The easiest way is WhatsApp Web (web.whatsapp.com): open the chat with yourself and drag the file in. Email or Google Drive also work.
+3. On the phone, tap the file. If it asks, allow installing unknown apps, then tap **Install**.
+4. Open **Linksy go** from the home screen like any other app. You don't need the laptop after this.
+
+The phone needs internet, because accounts and schedules are saved in Firebase.
+
+## 4. Check it works
+
+1. Tap **Create account**. Enter a name, an email and a password of 8+ characters. You should land on the home screen.
+2. Go to **Schedule → Add**, add a class for today, and tap **Save**. It should appear in the list and under **Today's commitments** on the home screen.
+3. Log out (top right) and log back in. Your class should still be there.
+
+## 5. Getting updates
+
+Pushing code to GitHub does **not** update the app on the phone. When there are new changes:
+
+```
+git pull
+flutter build apk --release
+```
+
+Then send the new **app-release.apk** to the phone and install it over the old one. You stay logged in, and your schedule is kept.
 
 ## Troubleshooting
 
 | Problem | Fix |
 | --- | --- |
-| `Android sdkmanager did not install NDK 28.2.13676358` | Install it from Android Studio (see **Before you start**). If it still fails, delete `%LOCALAPPDATA%\Android\Sdk\ndk\28.2.13676358`, reinstall it, then run `flutter clean`. |
-| Yellow `WARNING:` lines about `java.lang.System`, `sdkmanager` or `UseAllWindowsProcessorGroups` | Harmless, ignore them. Only the red `FAILURE:` part matters. |
-| Only Windows, Chrome and Edge show in `flutter devices` | The phone isn't connected. Run `adb devices`. If it's empty, repeat step 1, part 4. |
-| Phone shows `offline` or `unauthorized` | Run `adb kill-server`, then pair and connect again. |
-| `adb connect` fails or times out | University and work networks (often `10.x.x.x` addresses) usually block this. Use a home network or phone hotspot, or skip adb and install the APK from step 3 directly. Make sure both devices are on the same Wi‑Fi. Wireless debugging turns off when the phone changes network, so turn it back on. Allow adb if Windows Firewall asks. School or work Wi‑Fi often blocks this. |
-| Login or schedule doesn't load | Check the phone has internet. If it still fails, Email/Password sign-in may be off in the Firebase console, or the Firestore rules may not be deployed. |
-| Anything else | Run `flutter doctor -v` and send the output to Sophina. |
+| `Android sdkmanager did not install NDK 28.2.13676358` | Install the NDK from Android Studio (see step 1). If it still fails, delete `%LOCALAPPDATA%\Android\Sdk\ndk\28.2.13676358`, install it again, then run `flutter clean` and build again. |
+| Yellow `WARNING:` lines about `java.lang.System`, `sdkmanager` or `UseAllWindowsProcessorGroups` | Harmless. Only the red `FAILURE:` part matters. |
+| Phone won't install the APK | Allow the app you opened it from (WhatsApp, Files, Chrome) to install unknown apps. If an older version is installed, it updates over it. |
+| "Could not sign you in" or schedule won't load | Check the phone has internet. If it still fails, Email/Password sign-in may be off in the Firebase console, or the Firestore rules may not be published. Tell Sophina. |
+| Anything else | Run `flutter doctor -v` and send a photo of the output to Sophina. |
+
+## Optional: live testing with `flutter run`
+
+You only need this if you want to see code changes on the phone straight away while coding. To just use the app, steps 2–3 are enough.
+
+This uses **Wireless debugging** (Android 11+). The phone and laptop must be on the same Wi‑Fi, and campus or work Wi‑Fi usually blocks it. Use a home network or a hotspot from a **different** phone.
+
+1. On the phone, turn on Developer options: **Settings → About phone**, tap **Build number** 7 times.
+2. In **Developer options**, turn on **USB debugging** and **Wireless debugging**. On Realme phones, also turn on **Disable permission monitoring** (at the bottom).
+3. Tap **Wireless debugging → Pair device with pairing code**, and keep that popup open. Use the IP:port **from the popup**:
+
+   ```
+   adb pair 192.168.1.20:41235
+   ```
+
+   Type the 6-digit code when asked. It should say `Successfully paired`.
+4. Close the popup. Use the IP:port from the **main** Wireless debugging screen (it's a different port):
+
+   ```
+   adb connect 192.168.1.20:37099
+   adb devices
+   flutter run
+   ```
+
+   Keep the phone unlocked. If the phone shows an install popup, tap **Install**.
+
+Tips:
+
+- The 6-digit code goes after `adb pair`. It is not a port number.
+- Ports change whenever Wireless debugging turns off. Always read them fresh from the phone.
+- Don't run `adb kill-server` once you're connected, because it disconnects you.
+
+**If it says "adb is not recognized":** Windows can't find adb. Paste this into the VS Code terminal (PowerShell):
+
+```
+[Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path","User") + ";$env:LOCALAPPDATA\Android\Sdk\platform-tools", "User")
+$env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
+adb version
+```
+
+If `adb version` prints a number, it's fixed. If not, install **Android SDK Platform-Tools** (step 1).
 
 ## Notes for developers
 
