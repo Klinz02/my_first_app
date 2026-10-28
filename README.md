@@ -49,14 +49,37 @@ You only need to pair (step 3) the first time. Next time, just do step 4. Check 
 
 ### If it says "adb is not recognized"
 
-Use the full path to adb instead of just `adb`:
+adb is installed with Android Studio, but Windows can't find it. Windows only looks for commands in the folders listed in **PATH**, and Android Studio doesn't add adb's folder (`%LOCALAPPDATA%\Android\Sdk\platform-tools`) to that list. Flutter finds the Android SDK by itself, which is why `flutter build` works even when `adb` doesn't.
+
+**Permanent fix:** paste this into a PowerShell terminal (the default in VS Code):
+
+```
+[Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path","User") + ";$env:LOCALAPPDATA\Android\Sdk\platform-tools", "User")
+```
+
+Then **close VS Code completely and reopen it**, because terminals only read PATH when they start. Check it worked:
+
+```
+adb version
+```
+
+If it prints a version number, plain `adb pair` and `adb connect` will work. If it still fails, the folder doesn't exist yet. Install **Android SDK Platform-Tools** from Android Studio (see **Before you start**).
+
+**Quick fix for one-off use:** run adb by its full path. Note that PowerShell and Command Prompt write the path differently.
+
+In **PowerShell**:
+
+```
+& "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" pair 192.168.1.20:41235
+& "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" connect 192.168.1.20:37099
+```
+
+In **Command Prompt**:
 
 ```
 %LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe pair 192.168.1.20:41235
 %LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe connect 192.168.1.20:37099
 ```
-
-To make plain `adb` work, add that folder to PATH. Press Start, type **environment variables**, open **Environment Variables**. Under *User variables*, select **Path → Edit → New**, paste `%LOCALAPPDATA%\Android\Sdk\platform-tools`, and click OK. Then close and reopen Command Prompt.
 
 ## 2. Run the app
 
@@ -102,7 +125,7 @@ It worked if the last line says `√ Built build\app\outputs\flutter-apk\app-rel
 | Yellow `WARNING:` lines about `java.lang.System`, `sdkmanager` or `UseAllWindowsProcessorGroups` | Harmless, ignore them. Only the red `FAILURE:` part matters. |
 | Only Windows, Chrome and Edge show in `flutter devices` | The phone isn't connected. Run `adb devices`. If it's empty, repeat step 1, part 4. |
 | Phone shows `offline` or `unauthorized` | Run `adb kill-server`, then pair and connect again. |
-| `adb connect` fails or times out | Make sure both devices are on the same Wi‑Fi. Wireless debugging turns off when the phone changes network, so turn it back on. Allow adb if Windows Firewall asks. School or work Wi‑Fi often blocks this. |
+| `adb connect` fails or times out | University and work networks (often `10.x.x.x` addresses) usually block this. Use a home network or phone hotspot, or skip adb and install the APK from step 3 directly. Make sure both devices are on the same Wi‑Fi. Wireless debugging turns off when the phone changes network, so turn it back on. Allow adb if Windows Firewall asks. School or work Wi‑Fi often blocks this. |
 | Login or schedule doesn't load | Check the phone has internet. If it still fails, Email/Password sign-in may be off in the Firebase console, or the Firestore rules may not be deployed. |
 | Anything else | Run `flutter doctor -v` and send the output to Sophina. |
 
